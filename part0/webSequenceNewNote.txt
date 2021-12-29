@@ -1,0 +1,18 @@
+Browser->Server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+note right of Server: Pushes the new note to the server.
+
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+note left of Server: Asks for the page again with the new note in the server.
+
+Server->Browser: HTML-code
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+Server->Browser: main.css
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+Server->Browser: main.js
+note left of Browser: The browser gets the styling and the js code that starts executing
+
+note left of Browser: Request the data.json that contains the notes
+
+Browser->Server: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+Server->Browser: All the notes from data.json
+note left of Browser: The event handler that display the notes is fired.

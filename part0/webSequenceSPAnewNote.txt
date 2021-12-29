@@ -1,0 +1,7 @@
+note right of Browser: On submit click, doesn't POST immediatly to the server. 
+note right of Browser: Uses the js code that it got from the server to send the new note to the server.
+Also calls a function to "redraw" the notes with the previously added note on it.
+
+
+Browser->Server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+note left of Browser: After all of that, it submits the note to the server.
