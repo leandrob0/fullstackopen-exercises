@@ -14,7 +14,7 @@ const Part = (props) => {
   
   return (
     <>
-      <p key={props.index}>{props.val} {props.exercises[props.index]}</p>
+      <p key={props.index}>{props.name} {props.exercises}</p>
     </>
   )
 }
@@ -22,16 +22,15 @@ const Part = (props) => {
 const Content = (props) => {
 
   const {
-    parts,
-    exercises
+    parts
   } = props;
 
   return (
     <>
       {
-        parts.map((val,index) => {
+        parts.map((val, index) => {
           return (
-            <Part index={index} val={val} exercises={exercises}/>
+            <Part key={index} name={val.name} exercises={val.exercises}/>
           )
         })
       }
@@ -43,22 +42,40 @@ const Footer = (props) => {
 
   return (
     <>
-      <p>Number of exercises: {props.exercises[0] + props.exercises[1] + props.exercises[2]}</p>
+      <p>Number of exercises: 
+        {
+          props.exercises.reduce((prev, cur) => prev + cur.exercises, 0)
+        }
+      </p>
     </>
   )
 
 }
 
 const App = () => {
-  const course = 'Half Stack application development'
-  const parts = ['Fundamentals of React', 'Using props to pass data', 'State of a component']
-  const exercises = [10,7,14]
+  const course = {
+    name: 'Half Stack application development',
+    parts: [
+      {
+        name: 'Fundamentals of React',
+        exercises: 10
+      },
+      {
+        name: 'Using props to pass data',
+        exercises: 7
+      },
+      {
+        name: 'State of a component',
+        exercises: 14
+      }
+    ]
+  }
 
   return (
     <div>
-      <Header course={course}/>
-      <Content parts={parts} exercises={exercises}/>
-      <Footer exercises={exercises} />
+      <Header course={course.name}/>
+      <Content parts={course.parts}/>
+      <Footer exercises={course.parts} />
     </div>
   )
 }
