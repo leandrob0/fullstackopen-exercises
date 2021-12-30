@@ -11,12 +11,19 @@ const Feedback = ({handleState, text, id}) => {
 }
 
 const Stats = ({good, bad, neutral}) => {
+
+  const operacion = (good/(good+bad+neutral)) * 100;
+
   return (
     <>
       <h2>Statistics: </h2>
       <p>Good: {good}</p>
       <p>Bad: {bad}</p>
       <p>Neutral: {neutral}</p>
+      <p>All: {good+bad+neutral}</p>
+      <p>Percentage good: {(operacion) ? operacion.toFixed(2) : 0}</p>
+      <p>Average: {((good+bad+neutral)/3).toFixed(2)}</p>
+      <p></p>
     </>
   )
 }
@@ -31,13 +38,18 @@ const App = () => {
 
     const id = e.target.id;
     
-    if(id === 'good') {
-      setGood(good + 1);
-    } else if(id === 'neutral') {
-      setNeutral(neutral + 1);
-    } else {
-      setBad(bad + 1);
+    switch(id){
+      case 'good':
+        setGood(good + 1);
+        break;
+      case 'bad':
+        setBad(bad + 1);
+        break;
+      default:
+        setNeutral(neutral + 1);
+        break;
     }
+
   }
 
   return (
