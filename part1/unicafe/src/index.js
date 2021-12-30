@@ -10,20 +10,25 @@ const Feedback = ({handleState, text, id}) => {
   )
 }
 
+const Stat = (props) => {
+  return (
+    <p>{props.text} {props.stat}</p>
+  )
+}
+
 const Stats = ({good, bad, neutral}) => {
 
-  const operacion = (good/(good+bad+neutral)) * 100;
+  const percentage = ((good/(good+bad+neutral)) * 100) ? ((good/(good+bad+neutral)) * 100).toFixed(2) : 0;
+  const average = ((good+bad+neutral)/3).toFixed(2);
 
   return (
     <>
       <h2>Statistics: </h2>
-      <p>Good: {good}</p>
-      <p>Bad: {bad}</p>
-      <p>Neutral: {neutral}</p>
-      <p>All: {good+bad+neutral}</p>
-      <p>Percentage good: {(operacion) ? operacion.toFixed(2) : 0}</p>
-      <p>Average: {((good+bad+neutral)/3).toFixed(2)}</p>
-      <p></p>
+      <Stat text='Good' stat={good}/>
+      <Stat text='Neutral' stat={neutral}/>
+      <Stat text='Bad' stat={bad}/>
+      <Stat text='Percentage' stat={percentage}/>
+      <Stat text='Average' stat={average}/>
     </>
   )
 }
