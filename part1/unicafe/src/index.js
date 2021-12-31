@@ -27,7 +27,7 @@ const Stats = ({good, bad, neutral}) => {
       <Stat text='Good' stat={good}/>
       <Stat text='Neutral' stat={neutral}/>
       <Stat text='Bad' stat={bad}/>
-      <Stat text='Percentage' stat={percentage}/>
+      <Stat text='Percentage good' stat={percentage}/>
       <Stat text='Average' stat={average}/>
     </>
   )
