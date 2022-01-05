@@ -1,7 +1,28 @@
 import '../styles/Countries.css'
+import { useState , useEffect } from 'react';
+import axios from 'axios';
+
+const api_key = process.env.REACT_APP_API_KEY;
 
 const SingleCountry = (props) => {
   const { name, capital, population, languages, flag } = props;
+  const [weather, setWeather] = useState({
+    temp: 0,
+    wind: 0
+  })
+
+  useEffect(() => {
+    axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${api_key}&units=metric`)
+      .then(response => {
+        const data = response.data;
+        const obj = {
+          temp: data.main.temp,
+          wind: data.wind.speed
+        }
+        setWeather(obj);
+      })
+
+  }, [capital])
 
   return (
     <>
@@ -15,6 +36,9 @@ const SingleCountry = (props) => {
         })}
       </ul>
       <img src={flag} alt="Flag of the country" />
+      <h3>Weather in: {capital}</h3>
+      <p>Temperature: {weather.temp}°C</p>
+      <p>Wind: {weather.wind} KMh</p>
     </>
   );
 };
