@@ -1,11 +1,14 @@
-const Numbers = ({ persons }) => {
+const Numbers = ({ persons , onclick }) => {
   return (
     <>
       <h2>Numbers</h2>
       {persons.map((val) => (
-        <p key={val.name}>
-          {val.name} {val.number}
-        </p>
+        <div key={val.id} id={val.id}>
+          <p>
+            {val.name} {val.number}
+            <button onClick={onclick} type='button'>delete</button>
+          </p>
+        </div>
       ))}
     </>
   );

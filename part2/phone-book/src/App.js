@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import "./App.css";
 import Filter from "./components/Filter";
 import Form from "./components/Form";
 import Numbers from "./components/Numbers";
+import personsBack from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,9 +12,10 @@ const App = () => {
   const [filtered, setNewFiltered] = useState({ array: persons, value: "" });
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
-    });
+    personsBack
+      .getAll()
+      .then((allPersons) => setPersons(allPersons))
+      .catch((err) => console.log("request failed 1"));
   }, []);
 
   useEffect(() => {
@@ -24,16 +25,37 @@ const App = () => {
   const submitForm = (e) => {
     e.preventDefault();
 
-    if (persons.find((person) => person.name === newName)) {
-      alert(`${newName} is already registered.`);
-      setNewName("");
-      setNewNumber("");
-      return;
+    const found = persons.find((person) => person.name.toLowerCase() === newName.toLowerCase());
+
+    if (found) {
+      const id = found.id;
+      if (
+        window.confirm(
+          `${newName} already exists. Do you wanna replace the old number with a new one?`
+        )
+      ) {
+        personsBack
+          .updatePhoneNumber(id, { name: newName, number: newNumber })
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== id ? person : returnedPerson
+              )
+            );
+          })
+          .catch((err) => console.log("reques failed 4", err));
+      }
+    } else {
+      personsBack
+        .createNew({ name: newName, number: newNumber })
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((err) => console.log("request failed 2", err));
     }
 
-    const newPerson = persons.concat({ name: newName, number: newNumber });
-
-    setPersons(newPerson);
     setNewName("");
     setNewNumber("");
   };
@@ -51,6 +73,19 @@ const App = () => {
     }
   };
 
+  const deletePerson = (e) => {
+    if (window.confirm(`Delete ${e.target.parentNode.innerText}?`)) {
+      const id = e.target.parentNode.parentNode.id;
+
+      personsBack
+        .deletePerson(id)
+        .then((response) => {
+          setPersons(persons.filter((person) => person.id !== Number(id)));
+        })
+        .catch((err) => console.log("request failed 3", err));
+    }
+  };
+
   const nameChangeHandler = (e) => setNewName(e.target.value);
   const numberChangeHandler = (e) => setNewNumber(e.target.value);
 
@@ -65,7 +100,7 @@ const App = () => {
         valueNumber={newNumber}
         changeNumber={numberChangeHandler}
       />
-      <Numbers persons={filtered.array} />
+      <Numbers persons={filtered.array} onclick={deletePerson} />
     </div>
   );
 };
