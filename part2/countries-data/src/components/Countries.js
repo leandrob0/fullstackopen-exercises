@@ -1,29 +1,54 @@
-const Countries = (props) => {
-  const { countries } = props;
+import '../styles/Countries.css'
 
+const SingleCountry = (props) => {
+  const { name, capital, population, languages, flag } = props;
+
+  return (
+    <>
+      <h2>{name}</h2>
+      <p>Capital: {capital}</p>
+      <p>Population: {population}</p>
+      <h3>Languages: </h3>
+      <ul>
+        {Object.keys(languages).map((val) => {
+          return <li key={languages[val]}>{languages[val]}</li>;
+        })}
+      </ul>
+      <img src={flag} alt="Flag of the country" />
+    </>
+  );
+};
+
+const MultipleCountries = ({ countries, onClick }) => {
+  return (
+    <>
+      {countries.map((val) => {
+        return (
+          <div key={val.name.common} className="button-p">
+            <p className='country'>{val.name.common}</p>
+            <button onClick={onClick} className='button' type='button'>Show</button>
+          </div>
+        );
+      })}
+    </>
+  );
+};
+
+const Countries = ({ countries, onClick }) => {
   return (
     <>
       {countries.length > 10 ? (
         <p>Too many matches, specify another filter</p>
       ) : countries.length !== 1 ? (
-        countries.map((val) => <p key={val.name.common}>{val.name.common}</p>)
+        <MultipleCountries countries={countries} onClick={onClick} />
       ) : (
-        <>
-          <h2>{countries[0].name.common}</h2>
-          <p>Capital: {countries[0].capital[0]}</p>
-          <p>Population: {countries[0].population}</p>
-          <h3>Languages: </h3>
-          <ul>
-            {Object.keys(countries[0].languages).map((val) => {
-              return (
-                <li key={countries[0].languages[val]}>
-                  {countries[0].languages[val]}
-                </li>
-              );
-            })}
-          </ul>
-          <img src={countries[0].flags.png} alt="Flag of the country" />
-        </>
+        <SingleCountry
+          name={countries[0].name.common}
+          capital={(countries[0].capital === undefined) ? 'Unknown' : countries[0].capital[0]}
+          population={countries[0].population}
+          languages={countries[0].languages}
+          flag={countries[0].flags.png}
+        />
       )}
     </>
   );

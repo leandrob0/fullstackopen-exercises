@@ -28,10 +28,18 @@ const App = () => {
 
   const changeHandler = (e) => setInputVal(e.target.value);
 
+  const clickHandler = (e) => {
+    const filter = filtered.filter(val => {
+      return (val.name.common.toUpperCase() === e.target.previousElementSibling.innerText.toUpperCase());
+    })
+    setFiltered(filter);
+    setInputVal(e.target.previousElementSibling.innerText);
+  }
+
   return (
     <div>
       <CountrySearch changeHandler={changeHandler} val={inputVal} />
-      <Countries countries={filtered} />
+      <Countries countries={filtered} onClick={clickHandler} />
     </div>
   );
 };
