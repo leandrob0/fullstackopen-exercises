@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
+import "./styles/App.css";
 import Filter from "./components/Filter";
 import Form from "./components/Form";
 import Numbers from "./components/Numbers";
+import Success from "./components/Success";
 import personsBack from "./services/persons";
 
 const App = () => {
@@ -10,6 +11,10 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filtered, setNewFiltered] = useState({ array: persons, value: "" });
+  const [message, setMessage] = useState({
+    msg: "",
+    type: 0,
+  });
 
   useEffect(() => {
     personsBack
@@ -22,10 +27,25 @@ const App = () => {
     setNewFiltered({ array: persons, value: "" });
   }, [persons]);
 
+  const messageHandler = (msg, type) => {
+    setMessage({
+      msg: msg,
+      type: type
+    });
+    setTimeout(() => {
+      setMessage({
+        msg: '',
+        type: 0
+      });
+    }, 5000);
+  }
+
   const submitForm = (e) => {
     e.preventDefault();
 
-    const found = persons.find((person) => person.name.toLowerCase() === newName.toLowerCase());
+    const found = persons.find(
+      (person) => person.name.toLowerCase() === newName.toLowerCase()
+    );
 
     if (found) {
       const id = found.id;
@@ -42,16 +62,23 @@ const App = () => {
                 person.id !== id ? person : returnedPerson
               )
             );
+            messageHandler(`${newName} number updated successfully!`, 0);
           })
-          .catch((err) => console.log("reques failed 4", err));
+          .catch((err) => {
+            console.log(err);
+            messageHandler(`Sorry. ${newName} has already been deleted from the server.`, 1);
+          });
       }
     } else {
       personsBack
         .createNew({ name: newName, number: newNumber })
         .then((returnedPerson) => {
           setPersons(persons.concat(returnedPerson));
-          setNewName("");
-          setNewNumber("");
+          messageHandler(`${newName} added successfully!`, 0);
+          setTimeout(() => {
+            setNewName("");
+            setNewNumber("");
+          }, 5000);
         })
         .catch((err) => console.log("request failed 2", err));
     }
@@ -82,7 +109,10 @@ const App = () => {
         .then((response) => {
           setPersons(persons.filter((person) => person.id !== Number(id)));
         })
-        .catch((err) => console.log("request failed 3", err));
+        .catch((err) => {
+          console.log(err);
+          messageHandler(`Sorry. the person has already been deleted from the server. Refresh the page`, 1)
+        });
     }
   };
 
@@ -93,6 +123,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Filter value={filtered.value} onChange={filterPersons} />
+      <Success msg={message} />
       <Form
         submitForm={submitForm}
         valueName={newName}
