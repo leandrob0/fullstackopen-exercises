@@ -26,25 +26,34 @@ let phonebook = [
 
 // Get complete phonebook
 app.get("/api/persons", (req, res) => {
-    res.json(phonebook);
-})
+  res.json(phonebook);
+});
 
 // Get info of phonebook
 app.get("/info", (req, res) => {
-    res.send(`Phonebook has info of ${phonebook.length} people <br> ${new Date()}`)
-})
+  res.send(
+    `Phonebook has info of ${phonebook.length} people <br> ${new Date()}`
+  );
+});
 
 // Get specific person
 app.get("/api/persons/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const person = phonebook.find((person) => person.id === id);
+
+  if (person) {
+    res.json(person);
+  } else {
+    res.status(404).end();
+  }
+});
+
+// Delete specific person
+app.delete("/api/persons/:id", (req, res) => {
     const id = Number(req.params.id);
-    const person = phonebook.find(person => person.id === id);
+    phonebook = phonebook.filter(person => person.id !== id);
 
-    if(person) {
-        res.json(person);
-    } else {
-        res.status(404).end();
-    }
-
+    res.status(204).end();
 })
 
 const PORT = 3001;
