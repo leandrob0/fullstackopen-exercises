@@ -1,4 +1,5 @@
 const express = require("express");
+const morgan = require("morgan");
 const app = express();
 
 let phonebook = [
@@ -23,6 +24,9 @@ let phonebook = [
     number: "39-23-6423122",
   },
 ];
+
+app.use(morgan('tiny'));
+app.use(express.json());
 
 // Get complete phonebook
 app.get("/api/persons", (req, res) => {
@@ -58,10 +62,9 @@ app.delete("/api/persons/:id", (req, res) => {
 
 // Add a new person
 const generateId = () => {
-    return Math.random() * 4000;
+  return Math.random() * 4000;
 };
 
-app.use(express.json());
 app.post("/api/persons", (req, res) => {
   const body = req.body;
 
@@ -69,10 +72,10 @@ app.post("/api/persons", (req, res) => {
     return res.status(400).json({
       error: "content missing",
     });
-  } else if(phonebook.find(person => person.name === body.name)) {
+  } else if (phonebook.find((person) => person.name === body.name)) {
     return res.status(400).json({
-        error: "Name already exists",
-      });
+      error: "Name already exists",
+    });
   }
 
   const person = {
