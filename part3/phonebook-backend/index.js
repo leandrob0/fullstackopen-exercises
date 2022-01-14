@@ -65,10 +65,14 @@ app.use(express.json());
 app.post("/api/persons", (req, res) => {
   const body = req.body;
 
-  if (!body.content) {
+  if (!body.name || !body.number) {
     return res.status(400).json({
       error: "content missing",
     });
+  } else if(phonebook.find(person => person.name === body.name)) {
+    return res.status(400).json({
+        error: "Name already exists",
+      });
   }
 
   const person = {
