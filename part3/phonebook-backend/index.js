@@ -50,11 +50,36 @@ app.get("/api/persons/:id", (req, res) => {
 
 // Delete specific person
 app.delete("/api/persons/:id", (req, res) => {
-    const id = Number(req.params.id);
-    phonebook = phonebook.filter(person => person.id !== id);
+  const id = Number(req.params.id);
+  phonebook = phonebook.filter((person) => person.id !== id);
 
-    res.status(204).end();
-})
+  res.status(204).end();
+});
+
+// Add a new person
+const generateId = () => {
+    return Math.random() * 4000;
+};
+
+app.use(express.json());
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+
+  if (!body.content) {
+    return res.status(400).json({
+      error: "content missing",
+    });
+  }
+
+  const person = {
+    id: generateId(),
+    name: body.name,
+    number: body.number,
+  };
+
+  phonebook = phonebook.concat(person);
+  res.json(phonebook);
+});
 
 const PORT = 3001;
 app.listen(PORT, () => {
