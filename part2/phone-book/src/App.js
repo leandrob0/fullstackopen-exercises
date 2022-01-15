@@ -56,12 +56,8 @@ const App = () => {
       ) {
         personsBack
           .updatePhoneNumber(id, { name: newName, number: newNumber })
-          .then((returnedPerson) => {
-            setPersons(
-              persons.map((person) =>
-                person.id !== id ? person : returnedPerson
-              )
-            );
+          .then((returnedPersons) => {
+            setPersons(returnedPersons);
             messageHandler(`${newName} number updated successfully!`, 0);
           })
           .catch((err) => {
@@ -72,13 +68,13 @@ const App = () => {
     } else {
       personsBack
         .createNew({ name: newName, number: newNumber })
-        .then((returnedPerson) => {
-          setPersons(persons.concat(returnedPerson));
+        .then((returnedPersons) => {
+          setPersons(returnedPersons);
           messageHandler(`${newName} added successfully!`, 0);
           setTimeout(() => {
             setNewName("");
             setNewNumber("");
-          }, 5000);
+          }, 500);
         })
         .catch((err) => console.log("request failed 2", err));
     }
@@ -107,7 +103,7 @@ const App = () => {
       personsBack
         .deletePerson(id)
         .then((response) => {
-          setPersons(persons.filter((person) => person.id !== Number(id)));
+          setPersons(response);
         })
         .catch((err) => {
           console.log(err);
