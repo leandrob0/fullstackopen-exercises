@@ -1,5 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
+const uniqid = require("uniqid");
 const app = express();
 
 let phonebook = [
@@ -27,6 +29,7 @@ let phonebook = [
 
 morgan.token('posted', (req, res) => JSON.stringify(req.body));
 
+app.use(cors());
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms - :posted'));
 app.use(express.json());
 
@@ -56,15 +59,15 @@ app.get("/api/persons/:id", (req, res) => {
 
 // Delete specific person
 app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  phonebook = phonebook.filter((person) => person.id !== id);
+  const id = req.params.id.toString();
+  phonebook = phonebook.filter((person) => person.id.toString() !== id);
 
-  res.status(204).end();
+  res.json(phonebook);
 });
 
 // Add a new person
 const generateId = () => {
-  return Math.random() * 4000;
+  return uniqid();
 };
 
 app.post("/api/persons", (req, res) => {
@@ -90,7 +93,7 @@ app.post("/api/persons", (req, res) => {
   res.json(phonebook);
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
