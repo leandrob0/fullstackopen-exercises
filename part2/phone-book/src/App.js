@@ -68,8 +68,9 @@ const App = () => {
     } else {
       personsBack
         .createNew({ name: newName, number: newNumber })
-        .then((returnedPersons) => {
-          setPersons(returnedPersons);
+        .then((returnedPerson) => {
+          const newArray = persons.concat(returnedPerson);
+          setPersons(newArray);
           messageHandler(`${newName} added successfully!`, 0);
           setTimeout(() => {
             setNewName("");
