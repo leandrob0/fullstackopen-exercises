@@ -1,7 +1,8 @@
+require('dotenv').config();
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
-const uniqid = require("uniqid");
+const Person = require("./models/person");
 const app = express();
 
 let phonebook = [
@@ -36,26 +37,23 @@ app.use(express.json());
 
 // Get complete phonebook
 app.get("/api/persons", (req, res) => {
-  res.json(phonebook);
+  Person.find({}).then(persons => {
+    res.json(persons);
+  })
 });
 
 // Get info of phonebook
 app.get("/info", (req, res) => {
-  res.send(
-    `Phonebook has info of ${phonebook.length} people <br> ${new Date()}`
-  );
+  Person.find({}).then(persons => {
+    res.send(`Phonebook has info of ${persons.length} people <br> ${new Date()}`)
+  })
 });
 
 // Get specific person
 app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const person = phonebook.find((person) => person.id === id);
-
-  if (person) {
-    res.json(person);
-  } else {
-    res.status(404).end();
-  }
+  Person.findById(req.params.id).then(person => {
+    response.json(person)
+  })
 });
 
 // Delete specific person
@@ -67,10 +65,6 @@ app.delete("/api/persons/:id", (req, res) => {
 });
 
 // Add a new person
-const generateId = () => {
-  return uniqid();
-};
-
 app.post("/api/persons", (req, res) => {
   const body = req.body;
 
@@ -78,23 +72,19 @@ app.post("/api/persons", (req, res) => {
     return res.status(400).json({
       error: "content missing",
     });
-  } else if (phonebook.find((person) => person.name === body.name)) {
-    return res.status(400).json({
-      error: "Name already exists",
-    });
-  }
+  } 
 
-  const person = {
-    id: generateId(),
+  const person = new Person({
     name: body.name,
     number: body.number,
-  };
+  });
 
-  phonebook = phonebook.concat(person);
-  res.json(phonebook);
+  person.save().then(savedPerson => {
+    res.json(savedPerson);
+  })
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
