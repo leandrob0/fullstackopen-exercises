@@ -56,8 +56,15 @@ const App = () => {
       ) {
         personsBack
           .updatePhoneNumber(id, { name: newName, number: newNumber })
-          .then((returnedPersons) => {
-            setPersons(returnedPersons);
+          .then((returnedPerson) => {
+            const newAr = persons.map(person => {
+              if(person.id === returnedPerson.id) {
+                return returnedPerson;
+              } else {
+                return person;
+              }
+            })
+            setPersons(newAr);
             messageHandler(`${newName} number updated successfully!`, 0);
           })
           .catch((err) => {
@@ -103,8 +110,11 @@ const App = () => {
 
       personsBack
         .deletePerson(id)
-        .then((response) => {
-          setPersons(response);
+        .then(() => {
+          personsBack
+            .getAll()
+            .then(res => setPersons(res))
+            .catch(err => console.log("could not load persons",err))
         })
         .catch((err) => {
           console.log(err);
