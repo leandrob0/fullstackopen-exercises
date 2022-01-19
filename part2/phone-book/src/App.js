@@ -30,15 +30,15 @@ const App = () => {
   const messageHandler = (msg, type) => {
     setMessage({
       msg: msg,
-      type: type
+      type: type,
     });
     setTimeout(() => {
       setMessage({
-        msg: '',
-        type: 0
+        msg: "",
+        type: 0,
       });
     }, 5000);
-  }
+  };
 
   const submitForm = (e) => {
     e.preventDefault();
@@ -57,19 +57,28 @@ const App = () => {
         personsBack
           .updatePhoneNumber(id, { name: newName, number: newNumber })
           .then((returnedPerson) => {
-            const newAr = persons.map(person => {
-              if(person.id === returnedPerson.id) {
+            const newAr = persons.map((person) => {
+              if (person.id === returnedPerson.id) {
                 return returnedPerson;
               } else {
                 return person;
               }
-            })
+            });
             setPersons(newAr);
             messageHandler(`${newName} number updated successfully!`, 0);
           })
           .catch((err) => {
-            console.log(err);
-            messageHandler(`Sorry. ${newName} has already been deleted from the server.`, 1);
+            if (err.response.data.error.includes("number")) {
+              messageHandler(
+                `The number inserted is invalid! Must be (minimum) 8 characters long.`,
+                1
+              );
+            } else {
+              messageHandler(
+                `Sorry. ${newName} has already been deleted from the server.`,
+                1
+              );
+            }
           });
       }
     } else {
@@ -79,12 +88,24 @@ const App = () => {
           const newArray = persons.concat(returnedPerson);
           setPersons(newArray);
           messageHandler(`${newName} added successfully!`, 0);
-          setTimeout(() => {
-            setNewName("");
-            setNewNumber("");
-          }, 500);
         })
-        .catch((err) => console.log("request failed 2", err));
+        .catch((err) => {
+          if (
+            err.response.data.error.includes("Person validation failed: name")
+          ) {
+            messageHandler(
+              `The name inserted is invalid! Must be (minimum) 3 characters long.`,
+              1
+            );
+          } else if (
+            err.response.data.error.includes("Person validation failed: number")
+          ) {
+            messageHandler(
+              `The number inserted is invalid! Must be (minimum) 8 characters long.`,
+              1
+            );
+          }
+        });
     }
 
     setNewName("");
@@ -113,12 +134,15 @@ const App = () => {
         .then(() => {
           personsBack
             .getAll()
-            .then(res => setPersons(res))
-            .catch(err => console.log("could not load persons",err))
+            .then((res) => setPersons(res))
+            .catch((err) => console.log("could not load persons", err));
         })
         .catch((err) => {
           console.log(err);
-          messageHandler(`Sorry. the person has already been deleted from the server. Refresh the page`, 1)
+          messageHandler(
+            `Sorry. the person has already been deleted from the server. Refresh the page`,
+            1
+          );
         });
     }
   };
