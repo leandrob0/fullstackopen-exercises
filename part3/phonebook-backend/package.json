@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "lint": "eslint .",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd .. && cd ../part2/phone-book && npm run build && cp -r build ../../part3/phonebook-backend",
@@ -25,6 +26,7 @@
     "uniqid": "^5.4.0"
   },
   "devDependencies": {
+    "eslint": "^8.7.0",
     "nodemon": "^2.0.15"
   }
 }
