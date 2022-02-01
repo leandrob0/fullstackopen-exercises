@@ -1,11 +1,9 @@
 const http = require("http");
 const app = require("./app");
-const cors = require("cors");
 const config = require("./utils/config");
 const mongoose = require("mongoose");
 
-const mongoUrl = config.mongo;
-mongoose.connect(mongoUrl);
+mongoose.connect(config.mongo);
 
 const server = http.createServer(app);
 
