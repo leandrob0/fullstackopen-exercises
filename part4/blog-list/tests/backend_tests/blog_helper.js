@@ -1,5 +1,3 @@
-const Blog = require("../../models/blog");
-
 const initialBlogs = [
   {
     title: "Third book preview",
@@ -21,12 +19,6 @@ const initialBlogs = [
   },
 ];
 
-const blogsInDb = async () => {
-  const blogs = await Blog.find({});
-  return blogs;
-};
-
 module.exports = {
   initialBlogs,
-  blogsInDb,
 };
