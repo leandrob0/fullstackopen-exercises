@@ -1,9 +1,9 @@
 const http = require("http");
 const app = require("./app");
 const config = require("./utils/config");
-const mongoose = require("mongoose");
+const connectDb = require("./utils/mongo");
 
-mongoose.connect(config.mongo);
+connectDb();
 
 const server = http.createServer(app);
 
