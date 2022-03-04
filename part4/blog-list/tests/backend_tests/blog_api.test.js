@@ -68,6 +68,19 @@ describe("Blog tests", () => {
     expect(likes).toEqual(0);
 
   }, 100000);
+
+  test("Blog post without title and url", async () => {
+    const newBlog = {
+      author: "Me",
+      likes: 200
+    };
+
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(400)
+
+  }, 100000);
 });
 
 afterAll(() => {
