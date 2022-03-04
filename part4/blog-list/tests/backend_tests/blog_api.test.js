@@ -31,11 +31,12 @@ describe("Blog tests", () => {
     expect(res.body).toHaveLength(helper.initialBlogs.length);
   }, 100000);
 
-  test("Blog post working", async () => {
+  test("Blog post", async () => {
     const newBlog = {
       title: "Cacona",
       author: "Me",
       url: "",
+      likes: 12
     };
 
     await api
@@ -46,6 +47,25 @@ describe("Blog tests", () => {
     
     const blogsDb = await api.get("/api/blogs");
     expect(blogsDb.body).toHaveLength(helper.initialBlogs.length + 1);
+
+  }, 100000);
+
+  test("Blog post without likes", async () => {
+    const newBlog = {
+      title: "Cacona",
+      author: "Me",
+      url: ""
+    };
+
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+    
+    const blogsDb = await api.get("/api/blogs");
+    const likes = blogsDb.body[blogsDb.body.length - 1].likes;
+    expect(likes).toEqual(0);
 
   }, 100000);
 });
