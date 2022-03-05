@@ -30,8 +30,10 @@ describe("Blog tests", () => {
     const res = await api.get("/api/blogs");
     expect(res.body).toHaveLength(helper.initialBlogs.length);
   }, 100000);
+});
 
-  test("Blog post", async () => {
+describe("Post operations", () => {
+  test("returns 201 on every field filled correctly", async () => {
     const newBlog = {
       title: "Cacona",
       author: "Me",
@@ -50,7 +52,7 @@ describe("Blog tests", () => {
 
   }, 100000);
 
-  test("Blog post without likes", async () => {
+  test("Blog posts without likes and likes started at 0", async () => {
     const newBlog = {
       title: "Cacona",
       author: "Me",
@@ -69,7 +71,7 @@ describe("Blog tests", () => {
 
   }, 100000);
 
-  test("Blog post without title and url", async () => {
+  test("Blog returns 400 without title and url", async () => {
     const newBlog = {
       author: "Me",
       likes: 200
@@ -82,6 +84,35 @@ describe("Blog tests", () => {
 
   }, 100000);
 });
+
+describe("delete operations", () => {
+  test("single blog deleted and returns 204", async () => {
+    const beforeBlogs = await Blog.find({});
+    const beforeLength = beforeBlogs.length - 1;
+
+    await api
+      .delete(`/api/blogs/${beforeBlogs[beforeLength]._id}`)
+      .expect(204)
+
+    
+    const afterBlogs = await Blog.find({});
+
+    expect(afterBlogs).toHaveLength(helper.initialBlogs.length - 1);
+
+    const titles = afterBlogs.map(blog => blog.title);
+    expect(titles).not.toContain(beforeBlogs[beforeLength].title);
+
+  }, 100000);
+
+  test("single blog returns 404 if id doesn't exist", async () => {
+    const id = await helper.nonExistingId();
+
+    await api
+      .delete(`/api/blogs/${id}`)
+      .expect(404)
+
+  }, 100000)
+})
 
 afterAll(() => {
   mongoose.connection.close();

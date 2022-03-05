@@ -1,3 +1,5 @@
+const Blog = require("../../models/blog");
+
 const initialBlogs = [
   {
     title: "Third book preview",
@@ -19,6 +21,20 @@ const initialBlogs = [
   },
 ];
 
+const nonExistingId = async () => {
+  const blog = new Blog({
+    title: "willremovethissoon",
+    author: "me",
+    url: "",
+    likes: 0,
+  });
+  await blog.save();
+  await blog.remove();
+
+  return blog._id;
+};
+
 module.exports = {
   initialBlogs,
+  nonExistingId
 };
