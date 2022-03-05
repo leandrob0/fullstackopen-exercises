@@ -9,4 +9,8 @@ app.use(express.json());
 
 app.use("/api/blogs", blogsRouter);
 
+app.use((err, req, res) => {
+  res.send(err.status).json({ error: err });
+});
+
 module.exports = app;

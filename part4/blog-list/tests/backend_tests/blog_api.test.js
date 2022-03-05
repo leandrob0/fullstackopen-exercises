@@ -112,7 +112,41 @@ describe("delete operations", () => {
       .expect(404)
 
   }, 100000)
-})
+});
+
+describe("update operations", () => {
+  test("single blog updated and returns 200", async () => {
+    const beforeBlogs = await Blog.find({});
+    const beforeLength = beforeBlogs.length - 1;
+
+    const newBlog = {
+      title: "Only for test update now",
+      author: "Leandro Bovino",
+      url: "",
+      likes: 0,
+    }
+
+    await api
+      .put(`/api/blogs/${beforeBlogs[beforeLength]._id}`)
+      .send(newBlog)
+      .expect(200)
+
+    
+    const afterBlogs = await Blog.find({});
+
+    expect(afterBlogs).toHaveLength(helper.initialBlogs.length);
+    expect(afterBlogs[afterBlogs.length - 1].title).toEqual("Only for test update now")
+
+  }, 100000);
+
+  test("Update returns 404 on non-existing ID", async () => {
+    const id = await helper.nonExistingId();
+
+    await api
+      .put(`/api/blogs/${id}`)
+      .expect(404)
+  })
+});
 
 afterAll(() => {
   mongoose.connection.close();
